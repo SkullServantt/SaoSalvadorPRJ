@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ArrowDownRight, ArrowRight, ArrowUp, Menu, X, Instagram, MapPin, Clock3, Phone, ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react';
 
-const A = '/assets/';
+const A = `${import.meta.env.BASE_URL}assets/`;
 const phone = '5527999586735';
 const LocaleContext = React.createContext(null);
 const translations = {

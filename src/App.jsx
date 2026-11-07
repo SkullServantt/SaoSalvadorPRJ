@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ArrowDownRight, ArrowRight, ArrowUp, Menu, X, Instagram, MapPin, Clock3, Phone, ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react';
 
 const A = `${import.meta.env.BASE_URL}assets/`;
@@ -29,6 +29,8 @@ function LanguageFlag({ language }) {
   if (language === 'en') return <svg className="language-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#fff"/><path fill="#b22234" d="M0 0h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24V16H0z"/><path fill="#3c3b6e" d="M0 0h10.4v8.62H0z"/><g fill="#fff"><circle cx="2" cy="2" r=".48"/><circle cx="5" cy="2" r=".48"/><circle cx="8" cy="2" r=".48"/><circle cx="3.5" cy="4.2" r=".48"/><circle cx="6.5" cy="4.2" r=".48"/><circle cx="2" cy="6.4" r=".48"/><circle cx="5" cy="6.4" r=".48"/><circle cx="8" cy="6.4" r=".48"/></g></svg>;
   return <svg className="language-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#009b3a"/><path fill="#ffdf00" d="M12 2 22 8 12 14 2 8z"/><circle cx="12" cy="8" r="3.7" fill="#002776"/><path d="M8.8 7.6c2.4-.5 4.7-.2 6.5.8" fill="none" stroke="#fff" stroke-width=".55"/></svg>;
 }
+function LanguageButton() { const t = useCopy(); const { language, setLanguage } = useContext(LocaleContext); return <button className="language-toggle" type="button" onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')} aria-label={t('switchLanguage')}><LanguageFlag language={language}/>{language === 'pt' ? 'PT' : 'EN'}</button>; }
+function ThemeButton() { const t = useCopy(); const { theme, setTheme } = useContext(LocaleContext); return <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? t('enableLightMode') : t('enableDarkMode')} title={theme === 'dark' ? t('enableLightMode') : t('enableDarkMode')}>{theme === 'dark' ? <Sun size={16}/> : <Moon size={16}/>}</button>; }
 const photos = [
   ['igexport-DVyoxSLjqYL.webp', 'Roda de capoeira no espaço da associação', 'portrait'],
   ['igexport-DW6UpGBDrk1-5.webp', 'Movimento de capoeira na roda', 'landscape'],
@@ -52,11 +54,10 @@ const socials = [
 function Header() {
   const [open, setOpen] = useState(false);
   const t = useCopy();
-  const { language, setLanguage, theme, setTheme } = useContext(LocaleContext);
   const links = [[t('home'), '#inicio'], [t('project'), '#projeto'], [t('about'), '#sobre'], [t('join'), '#junte-se']];
   return <header className="header"><a className="brand" href="#inicio" aria-label={`Associação São Salvador, ${t('home').toLowerCase()}`}><img src={`${A}ass.png`} alt="" /><span>São Salvador<span className="brand-sub">{t('brandSubtitle')}</span></span></a>
-    <button className="menu-toggle" aria-label={open ? t('menuClose') : t('menuOpen')} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
-    <nav className={open ? 'nav open' : 'nav'} aria-label={t('navLabel')}>{links.map(([name, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{name}</a>)}<button className="language-toggle" type="button" onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')} aria-label={t('switchLanguage')}><LanguageFlag language={language}/>{language === 'pt' ? 'PT' : 'EN'}</button><button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? t('enableLightMode') : t('enableDarkMode')} title={theme === 'dark' ? t('enableLightMode') : t('enableDarkMode')}>{theme === 'dark' ? <Sun size={16}/> : <Moon size={16}/>}</button><a className="nav-cta" href="#junte-se" onClick={() => setOpen(false)}>{t('navCta')} <ArrowDownRight size={15} /></a></nav>
+    <div className="mobile-header-actions"><LanguageButton/><ThemeButton/><button className="menu-toggle" aria-label={open ? t('menuClose') : t('menuOpen')} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button></div>
+    <nav className={open ? 'nav open' : 'nav'} aria-label={t('navLabel')}>{links.map(([name, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{name}</a>)}<span className="desktop-header-controls"><LanguageButton/><ThemeButton/></span><a className="nav-cta" href="#junte-se" onClick={() => setOpen(false)}>{t('navCta')} <ArrowDownRight size={15} /></a></nav>
   </header>;
 }
 
@@ -132,7 +133,28 @@ function JoinSection() {
  return <section className="join-section" id="junte-se"><div className="section-wrap join-layout"><div className="join-copy"><SectionLabel number="03">{t('joinLabel')}</SectionLabel><h2>{t('joinTitle')} <em>{t('joinTitleAccent')}</em></h2><p>{t('joinIntro')}</p><a className="button button-lime" href={`https://wa.me/${phone}?text=${encodeURIComponent(t('whatsappMessage'))}`} target="_blank" rel="noreferrer"><Phone size={16}/> {t('whatsappCta')} <ArrowRight size={16}/></a><span className="join-phone">27 99958-6735</span><div className="join-details"><div><Clock3 size={17}/><span><b>{t('weekdays')}</b><small>{t('atTime')}</small></span></div><div><MapPin size={17}/><span><b>{t('nucleus')}</b><small>{t('joinLocation')}</small></span></div></div></div><MapPanel/></div></section>;
 }
 function Footer() { const t = useCopy(); return <footer className="footer"><div className="footer-top section-wrap"><a href="#inicio" className="footer-brand"><img src={`${A}ass.png`} alt=""/><span>Associação São Salvador<small>{t('brandSubtitle')}</small></span></a><p>{t('footerTagline')}<br/>{t('footerTagline2')}</p><div className="socials">{socials.map(([name, url]) => <a key={name} href={url} target="_blank" rel="noreferrer" aria-label={`${t('socialAria')} ${name}`}><Instagram size={16}/><span>{name}</span></a>)}</div><div className="footer-contact"><small>{t('contact')}</small><a href={`https://wa.me/${phone}`} target="_blank" rel="noreferrer">27 99958-6735 <ArrowRight size={15}/></a></div></div><div className="footer-bottom section-wrap"><span>© {new Date().getFullYear()} Associação São Salvador de Capoeira e Cultura</span><span>{t('footerLine')}</span><a href="#inicio">{t('backTop')} <ArrowUp size={14}/></a></div></footer>; }
-function ProjectMarquee() { const t = useCopy(); const group = <div className="marquee-group"><span>Associação São Salvador de Capoeira e Cultura</span><i aria-hidden="true"/><span>{t('marqueeInvite')}</span><i aria-hidden="true"/></div>; return <div className="project-marquee" role="region" aria-label={`Associação São Salvador de Capoeira e Cultura — ${t('marqueeInvite')}`}><div className="marquee-track">{group}<div className="marquee-copy" aria-hidden="true">{group}</div></div></div>; }
+function ProjectMarquee() {
+  const t = useCopy();
+  const { language } = useContext(LocaleContext);
+  const groupRef = useRef(null);
+  const [copies, setCopies] = useState(2);
+  const [duration, setDuration] = useState(30);
+  useEffect(() => {
+    const measure = () => {
+      const groupWidth = groupRef.current?.getBoundingClientRect().width || 620;
+      const nextCopies = Math.max(2, Math.ceil(window.innerWidth / groupWidth) + 1);
+      setCopies((current) => current === nextCopies ? current : nextCopies);
+      setDuration(Math.max(24, Math.round((groupWidth * nextCopies) / 52)));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    const observer = groupRef.current && 'ResizeObserver' in window ? new ResizeObserver(measure) : null;
+    if (observer && groupRef.current) observer.observe(groupRef.current);
+    return () => { window.removeEventListener('resize', measure); observer?.disconnect(); };
+  }, [language]);
+  const renderRun = (hidden = false) => <div className="marquee-run" aria-hidden={hidden || undefined}>{Array.from({ length: copies }, (_, i) => <div className="marquee-group" ref={!hidden && i === 0 ? groupRef : undefined} key={`${hidden ? 'copy' : 'main'}-${i}`}><span>Associação São Salvador de Capoeira e Cultura</span><i aria-hidden="true"/><span>{t('marqueeInvite')}</span><i aria-hidden="true"/></div>)}</div>;
+  return <div className="project-marquee" role="region" aria-label={`Associação São Salvador de Capoeira e Cultura — ${t('marqueeInvite')}`}><div className="marquee-track" style={{ '--marquee-duration': `${duration}s` }}>{renderRun()}{renderRun(true)}</div></div>;
+}
 function LoadingScreen() { const t = useCopy(); return <div className="loading-screen" role="status" aria-label={t('loading')}><div className="loader-emblem"><svg className="loader-ring" viewBox="0 0 120 120" aria-hidden="true"><circle className="loader-track" cx="60" cy="60" r="48"/><circle className="loader-progress" cx="60" cy="60" r="48"/></svg><img src={`${A}ass.png`} alt={t('heroLogoAlt')}/></div><span className="loader-label">{t('loadingTagline')}</span></div>; }
 export default function App() { const [loading, setLoading] = useState(true); const [language, setLanguage] = useState(() => window.localStorage.getItem('ass-site-language') === 'en' ? 'en' : 'pt'); const [theme, setTheme] = useState(() => window.localStorage.getItem('ass-site-theme') === 'dark' ? 'dark' : 'light'); useEffect(() => { document.documentElement.lang = language === 'en' ? 'en' : 'pt-BR'; document.title = translations[language].pageTitle; const description = document.querySelector('meta[name="description"]'); if (description) description.content = translations[language].metaDescription; window.localStorage.setItem('ass-site-language', language); }, [language]); useEffect(() => { document.documentElement.dataset.theme = theme; window.localStorage.setItem('ass-site-theme', theme); }, [theme]); useEffect(() => { const timer = window.setTimeout(() => setLoading(false), 900); return () => window.clearTimeout(timer); }, []); return <LocaleContext.Provider value={{ language, setLanguage, theme, setTheme }}>{loading && <LoadingScreen/>}<Header/><main><Hero/><ProjectGallery/><AboutSection/><JoinSection/></main><ProjectMarquee/><Footer/></LocaleContext.Provider>; }
 
